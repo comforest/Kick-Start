@@ -1,0 +1,88 @@
+<div id="all">			
+    <div id="left">
+        <div class="cont_left1">
+            <ul>
+                
+            <h4><b>수업</b></h4>
+            <% Lesson.where(:professor_id => 1).each do |i| %>
+            <li><a href='/report/index/<%= i.lesson_id %>'><%= i.subject %></a></li>
+            <%end%>
+            </ul>
+        </div>
+        <div class="cont_left2">
+            <ul>
+            <h4><b>조 관리</b></h4>
+            <% ii = 1 %>
+            <% Working.where(:lesson_id => params[:id]).each do |i| %>
+            
+                <li><a><%=ii%>조(<%=i.team.size%>)</a></li>
+                <% ii = ii + 1 %>
+            <% end %>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="right">
+        <div id="header">
+			<p class='label_p'><strong>항목별 평가를 보실 수 있어요.</strong></p>
+			
+		    
+            <div id="css_tabs">
+                <input id="tab1" type="radio" name="tab" />
+                <label style='width:23%' for="tab1">종합</label>
+                <input id="tab2" type="radio" name="tab" />
+                <label style='width:23%' for="tab2">과제수행도</label>
+                <input id="tab3" type="radio" name="tab" />
+                <label style='width:23%' for="tab3">회의참여도</label>
+                <input id="tab4" type="radio" name="tab" />
+                <label style='width:23%' for="tab4">팀워크기여도</label>
+                <div class="tab_content">Tab1 내용</div>
+                <div class="tab_content">
+                  <div class='row'>
+                    <p style='margin-top: 180px;' class='col-md-2'>이호연<br>
+                    컴퓨터과학<br>
+                    2015147530</p>
+                    <div class="mychart col-md-8">
+                      <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>1</strong></p>
+                      </div>
+              
+                      <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>2.5</strong></p>
+                      </div>
+                              <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>3</strong></p>
+                      </div>
+              
+                      <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>4</strong></p>
+                      </div>
+              
+                      <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>2</strong></p>
+                      </div>
+              
+                      <div class="mycolumn">
+                        <div class="fill"></div>
+                        <p class="rotulo" style="text-align:center;"><strong>5</strong></p>
+                      </div>
+                    </div>
+                      <div class="mycircle col-md-2">평점4.5
+                      </div>
+                    </div>
+              </div>
+              <div class="tab_content">Tab3 내용</div>
+              <div class="tab_content">Tab4 내용</div>
+            
+            
+        </div>
+    
+        
+    </div>
+    
+</div>

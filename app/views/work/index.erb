@@ -1,55 +1,123 @@
-
-<div class='row'>
-<%= render :partial => "work/tab" %>
-
-    <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2">
-        
-        <div class='row'>
-            <h1 class='col-md-3'>
-                ~8.25
-            </h1>
-            
-            <h1 class='col-md-3'>
-                서울대 입구
-            </h1>
-            
-            <h1 class='col-md-3'>
-                이디야
-            </h1>
-            <h1 class='col-md-3'>
-                6:00PM
-            </h1>
-            
+<div id="all">			
+    <div id="left">
+        <div class="cont_left1">
+            <ul>
+                
+            <h4><b>수업</b></h4>
+            <% @classlist.each do |i| %>
+            <% ccc = Lesson.find(Working.where(:working_id => i).take.lesson_id) %>
+            <li><a href='/work/index/<%=i%>'><%= ccc.subject %></a></li>
+            <%end%>
+            </ul>
         </div>
-    
-        <div class='row tabbox'>
-        
-            <% @name.each do |t| %>
-            <% size = 12/@name.size %>
-                <div class='col-md-<%= size %>
-                    <% if(t['on']) %>
-                        on
-                    <% else %>
-                        off
-                    <% end %>
-                '>
-                    <%= t['name'] %>
-                </div>
+        <div class="cont_left2">
+            <ul>
+            <h4><b>조 인원(<%=@db.team.size%>)</b></h4>
+            <% @db.team.each do |i| %>
+            <% m = Student.find(i) %>
+            <li><%= m.name%> (<%=m.major%>)</li>
             <% end %>
-            
-            
+            </ul>
         </div>
-    
-    
-        <ul>
-            <p>1. 조사</p>
-            <p>2. 조사</p>
-            <p>3. 조사</p>
-        </ul>
-        
-        <button class='btn btn-default' align='center'> 평가하기 </button>
-        
     </div>
     
-    
+    <div id="right">
+        <div id="header">
+			<p class='label_p'><strong>모임 일정을 추가해보세요.</strong></p>
+            <form style='width:705px;' action='/work/addmeeting/<%=params[:id]%>' method='POST'>
+                <div  style='display:inline-block;' class="input-group">
+                <input style='width:120px;' type="text" class="form-control" placeholder="DATE" aria-describedby="basic-addon2" name='date'>
+                <input style='width:120px;' type="text" class="form-control" placeholder="TIME" aria-describedby="basic-addon2" name='time'>
+                <input style='width:300px;' type="text" class="form-control" placeholder="PLACE" aria-describedby="basic-addon2" name='txt'>
+                </div>
+                
+              <input style='display:inline-block; float:right; width:150px;' type="submit" class="btn btn-warning" value='ADD'></button>
+            </form>
+        </div>
+        
+        
+        
+        
+        <% c = 0%><% n = 0%><% p = 0%>
+        <% @db.meetings.reverse.each do |meet| %>
+        <div class="cont_right">
+            <% if (DateTime.now.utc <= meet.day.utc) && n == 0 %> 
+            <p style='border-top:2px solid #333333;' class='label_p'><strong>계획된 모임</strong></p>
+            <% n = 1 %>
+            <%elsif(DateTime.now.utc > meet.day.utc && p == 0 )%>
+            <p style='border-top:2px solid #333333;' class ='label_p'><strong>지나간 모임</strong></p>
+            <% p = 1 %>
+            <%end%>
+            <% c = c +1 %>
+            <div class="meet">
+                <% wday = ['일','월','화','수','목','금','토']%>
+				<strong><p style="border-right:1px solid #949597;"><%=meet.day.month%>.<%=meet.day.day%>(<%=wday[meet.day.wday]%>)</p>
+				<p style="border-right:1px solid #949597;"><%=meet.day.hour%> : <%=meet.day.min%></p>
+				<p><%=meet.location%></p>
+				<p style='float:right'>수정</p></strong>
+			</div>
+
+
+            <div class="homework">
+                
+                <div id="css_tabs">
+                    
+                    <% ch = 0 %>
+                    <% @db.team.each do |i| %>
+                    <% m = Student.find(i) %>
+                    <input id="tab<%=c%><%=i%>" type="radio" name="tab<%=c%>" <%if(ch==0) %> checked="checked" <% ch = 1 end%>/>
+                    <label for="tab<%=c%><%=i%>"><%=m.name%></label>
+                    <% end %>
+                    
+                    <%if(DateTime.now.utc <= meet.day.utc )%>
+                        <p> 수정 </p>
+                    <%end%>
+                    
+                    <% @db.team.each do |i| %>
+                    <div class="tab_content">
+                        <table>
+                            
+                            <% hi = -1 %>
+                            <% ii = 1 %>
+                            
+                            <% meet.homeworks.each do |h| %>
+                            <% if(h.member_id == i) %>
+                            <% hi = h.homework_id %>
+                		      <% h.content.each do |hh| %>
+                                  <tr>
+                        		    <td style="width: 40px"><%=ii%></td>   <% ii =ii+ 1 %>
+                        		    <td style="width: 600px"><%=hh[:txt]%></td>
+                        		    <td>upload</td>
+                        		  </tr>
+                    		    <% end%>
+                    		    
+                            <% end %>
+                            <%end%>
+                		  
+                		</table>
+                		
+                        <%if(DateTime.now.utc <= meet.day.utc )%>
+            		    <form style='width:650px; margin-top:25px;' action='/work/addhomework/<%=params[:id]%>' method='POST'>
+                            <input type='hidden' value=<%=hi%> name='homework_id'>
+                            <input type='hidden' value=<%=i%> name='member_id'>
+                            <input type='hidden' value='<%=meet.meeting_id%>' name='meeting_id'>
+                            <div  style='display:inline-block;' class="input-group">
+                            <input style='width:200px;' type="text" class="form-control" placeholder="내용" aria-describedby="basic-addon2" name='txt'>
+                            </div>
+                            
+                          <input style='display:inline-block; float:right; width:52px;' type="submit" class="btn btn-warning" value='ADD'></button>
+                        </form>
+                        <%end%>
+                        <%if(DateTime.now.utc > meet.day.utc )%>
+                            <p style='heigt:20px margin-top:25px; margin-bottom:10px; float:right;'>평가하기</p>
+                        <% end %>
+            		</div>
+            		
+                    <% end %>
+                        
+                </div>
+            </div>
+        </div>
+        <% end %>
+    </div>
 </div>
