@@ -10,4 +10,7 @@ class WorkController < ApplicationController
                 {'name'=>'현우','on' => false},
                 {'name'=>'상우','on' => false}]
     end
+    
+    def test
+    end
 end
